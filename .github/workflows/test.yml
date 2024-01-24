@@ -6,7 +6,7 @@ name: Test-Deploy
 on:
   push:
     branches:
-      - danielmb/deploy-test
+      - main
 
 jobs:
   deploy-development:
