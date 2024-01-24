@@ -1,0 +1,65 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Test-Deploy
+
+on:
+  push:
+    branches:
+      - danielmb/deploy-test
+
+jobs:
+  deploy-development:
+    environment: Development
+    runs-on: TEST
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    # i-f: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.event_name == 'push'
+    env:
+      DISCORD_CLIENT_ID: '_'
+      DISCORD_CLIENT_SECRET: '_' # It needs to be set, so that the app can be started
+      NEXTAUTH_URL: 'http://localhost:3000'
+      DATABASE_URL: 'file:./db.sqlite'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check if location exists and create if not
+        id: deployment
+        run: |
+          $source = Get-Location
+          $destination = "$Env:DEPLOYMENT_PATH\$Env:DEPLOYMENT_FOLDER_NAME"
+          if(!(Test-Path -Path $destination)){
+            New-Item -Path $destination -ItemType Directory
+          }
+          Copy-Item -Path $source\* -Destination $destination -Recurse -Force -Exclude node_modules 
+          echo "DEPLOYMENT_FULL_PATH=$Env:DEPLOYMENT_PATH\$Env:DEPLOYMENT_FOLDER_NAME" >> $env:GITHUB_ENV
+          echo "path=$Env:DEPLOYMENT_PATH\$Env:DEPLOYMENT_FOLDER_NAME" >> $env:GITHUB_OUTPUT
+
+      - name: Install dependencies and build
+        run: |
+          cd "$Env:DEPLOYMENT_PATH\$Env:DEPLOYMENT_FOLDER_NAME"
+          npm install
+
+      - name: Remove old installation
+        run: |
+          cd "$Env:DEPLOYMENT_PATH\$Env:DEPLOYMENT_FOLDER_NAME"
+          pm2 delete ecosystem.config.js
+
+      - name: Start pm2
+        run: |
+          cd "$Env:DEPLOYMENT_PATH\$Env:DEPLOYMENT_FOLDER_NAME"
+          pm2 startOrRestart ecosystem.config.js --update-env --env production
+          pm2 save
+      - name: Remove old deployments
+        run: |
+          cd "$Env:DEPLOYMENT_PATH"
+          $deployments = Get-ChildItem -Path $Env:DEPLOYMENT_PATH | Sort-Object -Property LastWriteTime -Descending
+          $deployments | Select-Object -Skip 1 | Remove-Item -Recurse -Force
+
+          $survivors = Get-ChildItem -Path $Env:DEPLOYMENT_PATH | Sort-Object -Property LastWriteTime -Descending
+          $survivors | ForEach-Object { Write-Host $_.Name }
