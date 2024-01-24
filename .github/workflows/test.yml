@@ -10,7 +10,6 @@ on:
 
 jobs:
   deploy-development:
-    environment: Development
     runs-on: TEST
     strategy:
       matrix:
