@@ -22,6 +22,8 @@ jobs:
       DISCORD_CLIENT_SECRET: '_' # It needs to be set, so that the app can be started
       NEXTAUTH_URL: 'http://localhost:3000'
       DATABASE_URL: 'file:./db.sqlite'
+      DEPLOYMENT_PATH: 'C:\test\'
+      DEPLOYMENT_FOLDER_NAME: 'deployments'
 
     steps:
       - name: Checkout code
