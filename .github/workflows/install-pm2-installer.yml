@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.2.2
         # checkout the code from jessety/pm2-installer
         with:
           repository: jessety/pm2-installer
@@ -30,4 +30,5 @@ jobs:
         run: |
           node --version
           npm --version
-          pm2 --version
+          # pm2 --version
+          C:\ProgramData\npm\npm\pm2.cmd --version
