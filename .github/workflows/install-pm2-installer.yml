@@ -11,13 +11,13 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4.2.2
-        # checkout the code from jessety/pm2-installer
-        with:
-          repository: jessety/pm2-installer
-          ref: main # The branch to checkout. Default: the repository’s default branch
-          fetch-depth: 0 # Does not fetch history
+      # - name: Checkout code
+      #   uses: actions/checkout@v4.2.2
+      #   # checkout the code from jessety/pm2-installer
+      #   with:
+      #     repository: jessety/pm2-installer
+      #     ref: main # The branch to checkout. Default: the repository’s default branch
+      #     fetch-depth: 0 # Does not fetch history
 
       # - name: Run configure
       #   run: |
@@ -28,6 +28,17 @@ jobs:
       #     npm run setup
       - name: check if pm2 is installed
         run: |
-          node --version
-          npm --version
-          pm2 list
+          # node --version
+          # npm --version
+          # # pm2 --version
+          # C:\ProgramData\npm\npm\pm2.cmd --version
+          $pm2 = Get-WMIObject -class Win32_Service -Filter "Name='pm2.exe'"
+
+
+          if ($pm2 -eq $null) {
+            echo "pm2 is not installed"
+            exit 1
+          }
+
+          # Start the service
+          Start-Service -Name pm2.exe
