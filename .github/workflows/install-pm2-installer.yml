@@ -30,4 +30,4 @@ jobs:
         run: |
           node --version
           npm --version
-          pm2 --version
+          pm2 list
