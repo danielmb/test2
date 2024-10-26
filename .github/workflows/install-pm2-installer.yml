@@ -1,0 +1,24 @@
+name: install-pm2-installer
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  install-pm2-installer:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        # checkout the code from jessety/pm2-installer
+        with:
+          repository: jessety/pm2-installer
+          ref: main # The branch to checkout. Default: the repository’s default branch
+          fetch-depth: 0 # Does not fetch history
+
+      - name: Run configure and setup
+        run: |
+          dir
