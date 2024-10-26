@@ -27,3 +27,5 @@ jobs:
       - name: check if pm2 is installed
         run: |
           pm2 --version
+          node --version
+          npm --version
