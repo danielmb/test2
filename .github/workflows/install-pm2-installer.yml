@@ -19,7 +19,11 @@ jobs:
           ref: main # The branch to checkout. Default: the repository’s default branch
           fetch-depth: 0 # Does not fetch history
 
-      - name: Run configure and setup
+      # - name: Run configure and setup
+      #   run: |
+      #     npm run configure
+      #     npm run setup
+
+      - name: check if pm2 is installed
         run: |
-          npm run configure
-          npm run setup
+          pm2 --version
