@@ -21,4 +21,5 @@ jobs:
 
       - name: Run configure and setup
         run: |
-          dir
+          npm run configure
+          npm run setup
